@@ -17,6 +17,8 @@ class _SamLogin extends State<SamLogin> {
 
   @override
   Widget build(BuildContext context) {
+
+    //loading = false;
     return SafeArea(
         child: Scaffold(
             key: scafoldKey,
@@ -42,9 +44,9 @@ class _SamLogin extends State<SamLogin> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      // Text("Email", style: TextStyle(color: Colors.white,
-                      //     fontSize: 15,
-                      //     fontWeight: FontWeight.w600),),
+                      Text("Email", style: TextStyle(color: Colors.white,
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600),),
                       Container(
                         height: 60,
                         width: 250,
@@ -175,36 +177,26 @@ class _SamLogin extends State<SamLogin> {
 
   }
   bool validate(){
+
     if(emailC.text.isEmpty){
       scafoldKey.currentState!.showSnackBar(
           new SnackBar(content: Text("ENTER EMAIL"))
       );
       return false;
     }
-    if (!emailC.text.contains("@")) {
-      scafoldKey.currentState!.showSnackBar(
-          new SnackBar(content: Text("ENTER A VALID EMAIL"))
-      );
-      return false;
-    }  if (!emailC.text.contains("tconclem@gmail.com")) {
+    else if (!emailC.text.contains("@")) {
       scafoldKey.currentState!.showSnackBar(
           new SnackBar(content: Text("ENTER A VALID EMAIL"))
       );
       return false;
     }
-    if (!passwordC.text.contains("chelsea")) {
-      scafoldKey.currentState!.showSnackBar(
-          new SnackBar(content: Text("ENTER CORRECT PASSWORD"))
-      );
-      return false;
-    }
-    if (passwordC.text.isEmpty) {
+    else if (passwordC.text.isEmpty) {
       scafoldKey.currentState!.showSnackBar(
           new SnackBar(content: Text("ENTER PASSWORD"))
       );
       return false;
     }
-    if (passwordC.text.length < 6) {
+    else if (passwordC.text.length < 6) {
       scafoldKey.currentState!.showSnackBar(
           new SnackBar(content: Text("Password is weak"))
       );
@@ -218,25 +210,34 @@ class _SamLogin extends State<SamLogin> {
 
   void makePostRequest() async{
     try {
-      var url = Uri.parse(" https://marketshare.iflsc.com/user/login");
+      var url = Uri.parse("https://marketshare.iflsc.com/user/login");
 
       var headers = {
         HttpHeaders.authorizationHeader: 'Bearer ',
         'Content-Type': 'application/json'
       };
-      var body = jsonEncode(<String,Object>{
+
+      var body = {
         "Email": emailC.text.trim(),
-        "password": passwordC.text.trim(),
-      });
+        "Password": passwordC.text.trim()
+      };
+
+
       var response = await http.post(url,body: body, );
       print('Response status: ${response.statusCode}');
       print('Response body: ${response.body}');
 
       var dataDecoded = jsonDecode(response.body);
       if(response.statusCode == 200){
+
+        String msg = dataDecoded["message"];
+        scafoldKey.currentState!.showSnackBar(
+            new SnackBar(content: Text(msg))
+        );
+
         setState(() {
           loading = false;
-          if(passwordC.text.contains("chealsea"));
+          //if(passwordC.text.contains("chealsea"));
 
         });
 
